@@ -77,119 +77,65 @@ def isEnd():
         return False
 
 
-#  Rule 0: Check IF Machine can Win [ IF needs 1 place to Win ]
-def machineRule0():
-    marked = 0
-    
-    for i in range(len(board)):
-        # Check Machine Horizontal Win
-        marked = 0
-        check = []
-        for a in range(len(board)):
-            if (board[i][a] == 'O'):
-                marked += 1
-            elif (board[i][a] == '-'):
-                check = [i,a]
-            else:
-                marked = 0
-        if (marked == 2 and check != []):
-            return check
-
-        # Check Machine Vertical Win
-        marked = 0
-        check = []
-        for a in range(len(board)):
-            if (board[a][i] == 'O'):
-                marked += 1
-            elif (board[a][i] == '-'):
-                check = [a,i]
-            else:
-                marked = 0
-        if (marked == 2 and check != []):
-            return check
-
-    # Check Diagonal Win
-    marked = 0
-    check = []
-    for i in range(len(board)):
-        if (board[i][i] == 'O'):
-            marked += 1
-        elif (board[i][i] == '-'):
-            check = [i,i]
-        else:
-                marked = 0
-    if (marked == 2 and check != []):
-        return check    
-
-    # Check Inverse Diagonal Win
-    marked = 0
-    check = []
+#  Rule 1: Check IF Machine or Player can Win [ IF needs 1 place to Win ]
+def machineRule1(marker):
+    markedD = 0
+    markedID = 0
+    checkD = []
+    checkID = []
     cont = 0
-    for i in range(len(board)-1,-1,-1):
-        if (board[cont][i] == 'O'):
-            marked += 1
-        elif (board[cont][i] == '-'):
-            check = [cont,i]
-        else:
-            marked = 0
-        cont += 1
-    if (marked == 2 and check != []):
-        return check   
-
-    return machineRule1()
-
-#  Rule 1: Check IF Player can Win [ IF needs 1 place to Win ]
-def machineRule1():
-    marked = 0
-   
     for i in range(len(board)):
-         # Check Player Horizontal Win
-        marked = 0
-        check = []
+        markedH = 0
+        markedV = 0
+        checkV = []
+        checkH = []
         for a in range(len(board)):
-            if (board[i][a] == 'X'):
-                marked += 1
+            # Check Horizontal Win
+            if (board[i][a] == marker):
+                markedH += 1
             elif (board[i][a] == '-'):
-                check = [i,a]
-        if (marked == 2 and check != []):
-            return check
+                checkH = [i,a]
 
-        # Check Player Vertical Win
-        marked = 0
-        check = []
-        for a in range(len(board)):
-            if (board[a][i] == 'X'):
-                marked += 1
+            # IF Horizontal Win -> Return
+            if (markedH == 2 and checkH != []):
+                return checkH;      
+
+            # Check Vertical Win
+            if (board[a][i] == marker):
+                markedV += 1
             elif (board[a][i] == '-'):
-                check = [a,i]
-        if (marked == 2 and check != []):
-            return check
+                checkV = [a,i]  
 
-    # Check Player Diagonal Win
-    marked = 0
-    check = []
-    for i in range(len(board)):
-        if (board[i][i] == 'X'):
-            marked += 1
+            # IF Vertical Win -> Return
+            if (markedV == 2 and checkV != []):
+                return checkV;        
+            
+        # Check Diagonal Win
+        if (board[i][i] == marker):
+            markedD += 1
         elif (board[i][i] == '-'):
-            check = [i,i]
-    if (marked == 2 and check != []):
-        return check    
+            checkD = [i,i]
 
-    # Check Player Inverse Diagonal Win
-    marked = 0
-    check = []
-    cont = 0
-    for i in range(len(board)-1,-1,-1):
-        if (board[cont][i] == 'X'):
-            marked += 1
-        elif (board[cont][i] == '-'):
-            check = [cont,i]
-        cont += 1
-    if (marked == 2 and check != []):
-        return check   
+        # IF Diagonal Win -> Return
+        if (markedD == 2 and checkD != []):
+            return checkD;   
 
-    return machineRule2()
+        # Check Inverse Diagonal Win
+        if (board[i][cont] == marker):
+            markedID += 1
+        elif (board[i][cont] == '-'):
+            checkID = [i,cont]
+
+        # IF Inverse Diagonal Win -> Return
+        if (markedID == 2 and checkID != []):
+            return checkID;   
+
+        cont = cont - 1
+
+    if (marker == "O"):
+        return machineRule1('X')
+    else:
+        return machineRule2()
 
 # Rule 2: IF the center is open -> fill the center
 def machineRule2():
@@ -260,7 +206,7 @@ def main():
             errorInput = False
 
             # Run Machine IA
-            choise = machineRule0()
+            choise = machineRule1('O')
 
             if (choise):
                 board[choise[0]][choise[1]] = 'O'
@@ -271,4 +217,3 @@ def main():
                 print (res,"\n")
                 return True
 main()
-        
